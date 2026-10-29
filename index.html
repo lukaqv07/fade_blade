@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fade &amp; Blade – Barber Shop</title>
+<style>
+:root{--bg:#f6f3ee;--card:#fff;--text:#1d1b19;--muted:#6b665f;--accent:#a8741a;--line:#e3ddd3;--on:#fff;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141311;--card:#1f1d1a;--text:#f1ece4;--muted:#a39d93;--accent:#d4a24c;--line:#35312b;--on:#141311;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#141311;--card:#1f1d1a;--text:#f1ece4;--muted:#a39d93;--accent:#d4a24c;--line:#35312b;--on:#141311;color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Georgia,"Times New Roman",serif;line-height:1.6}
+.w{max-width:960px;margin:0 auto;padding:0 20px}
+header{display:flex;justify-content:space-between;align-items:center;padding:18px 0}
+.logo{font-size:1.3rem;letter-spacing:.08em;font-weight:bold}
+.logo span{color:var(--accent)}
+a.btn,button.btn{display:inline-block;background:var(--accent);color:var(--on);border:0;padding:12px 26px;font:inherit;font-weight:bold;letter-spacing:.05em;text-decoration:none;border-radius:4px;cursor:pointer}
+.hero{padding:70px 0 60px;text-align:center}
+.hero h1{font-size:clamp(2.2rem,7vw,4rem);margin:0 0 12px;line-height:1.1}
+.hero p{color:var(--muted);max-width:520px;margin:0 auto 28px;font-size:1.1rem}
+section{padding:46px 0;border-top:1px solid var(--line)}
+h2{margin:0 0 24px;font-size:1.7rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:20px}
+.card h3{margin:0 0 4px;font-size:1.1rem}
+.price{color:var(--accent);font-weight:bold}
+.muted{color:var(--muted);font-size:.95rem}
+form{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:24px;display:grid;gap:16px}
+label{display:grid;gap:6px;font-size:.9rem;color:var(--muted)}
+input,select{font:inherit;padding:11px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--text);width:100%}
+.slots{display:flex;flex-wrap:wrap;gap:8px}
+.slot{padding:8px 14px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--text);font:inherit;cursor:pointer}
+.slot.sel{background:var(--accent);color:var(--on);border-color:var(--accent)}
+.slot:disabled{opacity:.35;text-decoration:line-through;cursor:not-allowed}
+.msg{padding:14px;border-radius:4px;display:none}
+.msg.ok{display:block;border:1px solid var(--accent)}
+.msg.err{display:block;border:1px solid #c0392b;color:#c0392b}
+footer{padding:30px 0;text-align:center;color:var(--muted);font-size:.9rem;border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+<div class="w">
+<header><div class="logo">FADE <span>&amp;</span> BLADE</div><a class="btn" href="#booking">Rezerviraj</a></header>
+
+<div class="hero">
+<h1>Oštar stil.<br>Čist rez.</h1>
+<p>Klasično šišanje, moderni fade i njega brade. Rezerviraj termin online u nekoliko klikova.</p>
+<a class="btn" href="#booking">Rezerviraj termin</a>
+</div>
+
+<section id="usluge">
+<h2>Usluge</h2>
+<div class="grid">
+<div class="card"><h3>Šišanje</h3><div class="muted">Klasično ili moderno, 30 min</div><div class="price">15 €</div></div>
+<div class="card"><h3>Šišanje + brada</h3><div class="muted">Kompletan izgled, 45 min</div><div class="price">22 €</div></div>
+<div class="card"><h3>Brada</h3><div class="muted">Oblikovanje i njega, 20 min</div><div class="price">10 €</div></div>
+<div class="card"><h3>Dječje šišanje</h3><div class="muted">Do 12 godina, 25 min</div><div class="price">12 €</div></div>
+</div>
+</section>
+
+<section id="booking">
+<h2>Online rezervacija</h2>
+<form id="f" novalidate>
+<label>Usluga<select id="svc"></select></label>
+<label>Datum<input type="date" id="date"></label>
+<div><div class="muted" style="margin-bottom:6px">Slobodni termini</div><div class="slots" id="slots"><span class="muted">Odaberi datum.</span></div></div>
+<label>Ime i prezime<input id="name" autocomplete="name"></label>
+<label>Telefon<input id="phone" type="tel" autocomplete="tel"></label>
+<button class="btn" type="submit">Potvrdi rezervaciju</button>
+<div class="msg" id="msg" role="status"></div>
+</form>
+</section>
+
+<section id="kontakt">
+<h2>Radno vrijeme</h2>
+<p class="muted">Pon – Pet: 09:00 – 19:00<br>Subota: 09:00 – 15:00<br>Nedjelja: zatvoreno</p>
+</section>
+<footer>© Fade &amp; Blade · Zagreb</footer>
+</div>
+
+<script>
+var SERVICES=["Šišanje – 15 €","Šišanje + brada – 22 €","Brada – 10 €","Dječje šišanje – 12 €"];
+var svc=document.getElementById("svc"),dateEl=document.getElementById("date"),slotsEl=document.getElementById("slots"),msg=document.getElementById("msg");
+var chosen=null;
+SERVICES.forEach(function(s){var o=document.createElement("option");o.textContent=s;svc.appendChild(o)});
+var today=new Date();today.setMinutes(today.getMinutes()-today.getTimezoneOffset());
+dateEl.min=today.toISOString().slice(0,10);
+
+function load(){try{return JSON.parse(localStorage.getItem("bookings")||"[]")}catch(e){return []}}
+function save(l){try{localStorage.setItem("bookings",JSON.stringify(l))}catch(e){}}
+function show(t,c){msg.className="msg "+c;msg.textContent=t}
+
+function renderSlots(){
+  chosen=null;slotsEl.innerHTML="";
+  if(!dateEl.value){slotsEl.innerHTML='<span class="muted">Odaberi datum.</span>';return}
+  var d=new Date(dateEl.value+"T00:00:00"),day=d.getDay();
+  if(day===0){slotsEl.innerHTML='<span class="muted">Nedjeljom ne radimo.</span>';return}
+  var end=day===6?15:19,taken=load().filter(function(b){return b.date===dateEl.value}).map(function(b){return b.time});
+  for(var h=9;h<end;h++){["00","30"].forEach(function(m){
+    var t=(h<10?"0":"")+h+":"+m,b=document.createElement("button");
+    b.type="button";b.className="slot";b.textContent=t;b.disabled=taken.indexOf(t)>-1;
+    b.onclick=function(){chosen=t;[].forEach.call(slotsEl.children,function(x){x.classList.remove("sel")});b.classList.add("sel")};
+    slotsEl.appendChild(b)})}
+}
+dateEl.addEventListener("change",renderSlots);
+
+document.getElementById("f").addEventListener("submit",function(e){
+  e.preventDefault();
+  var n=document.getElementById("name").value.trim(),p=document.getElementById("phone").value.trim();
+  if(!dateEl.value||!chosen||!n||!p){show("Molimo odaberi datum, termin te upiši ime i telefon.","err");return}
+  var l=load();l.push({date:dateEl.value,time:chosen,service:svc.value,name:n,phone:p});save(l);
+  var dt=dateEl.value.split("-").reverse().join(".")+".";
+  show("Hvala, "+n+"! Termin je rezerviran: "+dt+" u "+chosen+" ("+svc.value+").","ok");
+  renderSlots();
+});
+</script>
+</body>
+</html>
